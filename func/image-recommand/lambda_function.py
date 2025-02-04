@@ -11,15 +11,15 @@ def lambda_handler(event, context):
     search_image_url = event.get("search_image_url", "")
     
     # 產生圖片的嵌入特徵
-    embedded_image = create_test_image_embedding()
+    embedded_image = create_test_image_embedding(search_image_url)
     
     # 執行搜尋並獲取結果
-    results = display_top_k_results(client, embedded_image)
+    similar_images_list = display_top_k_results(client, embedded_image)
     
     return {
         "statusCode": 200,
         "body": json.dumps({
             "search_image_url": search_image_url,
-            "results": results
+            "results": similar_images_list
         })
     }

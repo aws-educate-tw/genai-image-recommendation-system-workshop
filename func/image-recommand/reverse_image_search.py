@@ -6,6 +6,7 @@ import boto3
 
 s3 = boto3.client('s3')
 client = initialize_opensearch_client()
+region = "us-west-2"
 VECTOR_NAME = "vectors"
 VECTOR_MAPPING = "image_file"
 INDEX_NAME = "image_vectors"
@@ -62,7 +63,7 @@ def display_image(image_path):
     image.show()
 
 def display_top_k_results(client, object_embedding):
-    
+    similar_images_list = [] # List to store similar images' public URLs
     # List of image file names from the K-NN search
     image_files = search_index(client, object_embedding)
 
@@ -85,3 +86,10 @@ def display_top_k_results(client, object_embedding):
         # display_image(local_path)
         print(f"Downloaded image: {file_path}")
         print()
+        # store the similar images in a list
+        # https://<bucket-name>.s3.<region>.amazonaws.com/<key>
+        public_url = f"https://{BUCKET_NAME}.s3.{region}.amazonaws.com/{file_path}"
+        similar_images_list.append(public_url)
+
+    # return all similar images
+    return similar_images_list
