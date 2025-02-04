@@ -64,6 +64,7 @@ def display_image(image_path):
 
 def display_top_k_results(client, object_embedding):
     similar_images_list = [] # List to store similar images' public URLs
+    similar_images_key_list = [] # List to store similar images' keys
     # List of image file names from the K-NN search
     image_files = search_index(client, object_embedding)
 
@@ -90,6 +91,7 @@ def display_top_k_results(client, object_embedding):
         # https://<bucket-name>.s3.<region>.amazonaws.com/<key>
         public_url = f"https://{BUCKET_NAME}.s3.{region}.amazonaws.com/{file_path}"
         similar_images_list.append(public_url)
+        similar_images_key_list.append(file_path)
 
     # return all similar images
-    return similar_images_list
+    return similar_images_list, similar_images_key_list
