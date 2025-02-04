@@ -66,10 +66,11 @@ def download_image(url):
 def encode_image_to_base64(image_data):
     return base64.b64encode(image_data).decode('utf-8')
 
-def create_test_image_embedding():
+def create_test_image_embedding(image_url):
     # Example image URL
     # "https://media.istockphoto.com/id/169978088/photo/santa-monica-pier-sunset.jpg?s=612x612&w=0&k=20&c=hYdJbZGn9bWvY-wKuOhPpVJ_My3qeiuGhku_xHnkHJw="
-    image_url = "https://storage.googleapis.com/kaggle-datasets-images/298806/611794/33134a2eb9c0d349fc18ff4183b1ef07/dataset-cover.png?t=2019-08-12-21-16-57"
+    if image_url == "":
+        image_url = "https://storage.googleapis.com/kaggle-datasets-images/298806/611794/33134a2eb9c0d349fc18ff4183b1ef07/dataset-cover.png?t=2019-08-12-21-16-57"
     image_data = download_image(image_url)
     object_embedding = None
     

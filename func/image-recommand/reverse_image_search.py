@@ -1,6 +1,5 @@
 import os
 from PIL import Image
-from embedding_searching_target import create_test_image_embedding
 from connect_OpenSearch_collection import initialize_opensearch_client
 import boto3
 
@@ -68,7 +67,8 @@ def display_top_k_results(client, object_embedding):
     image_files = search_index(client, object_embedding)
 
     # Create a local directory to store downloaded images
-    download_dir = 'RESULTS'
+    # download_dir = 'RESULTS'
+    download_dir = "/tmp/my_downloads"
 
     # Create directory if not exists
     os.makedirs(download_dir, exist_ok=True)
@@ -79,16 +79,9 @@ def display_top_k_results(client, object_embedding):
         print("Score: " + str(file_name[1]))
         file_path = file_name[0]
         file_name = file_path.split("/")[-1]
-        # local_path = os.path.join(download_dir, file_name[0])
-        # print(local_path)
-        # Ensure to add in the necessary prefix before the file name if files are in subdirectories in the bucket
-        # ex. s3.download_file(BUCKET_NAME, "training/loafers/"+file_name[0], local_path)
-        s3.download_file(Bucket = BUCKET_NAME, Key = file_path, Filename = file_name)
-
+    
+        s3.download_file(Bucket = BUCKET_NAME, Key = file_path, Filename = "/tmp/"+file_name)
         # Open downloaded image and display it
         # display_image(local_path)
         print(f"Downloaded image: {file_path}")
         print()
-
-embedded_image = create_test_image_embedding()
-display_top_k_results(client, embedded_image)
