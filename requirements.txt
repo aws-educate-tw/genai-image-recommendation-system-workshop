@@ -1,0 +1,7 @@
+opensearch-py
+pandas
+boto3
+Image
+Pillow
+requests-aws4auth
+tqdm
