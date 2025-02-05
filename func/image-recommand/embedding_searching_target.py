@@ -4,56 +4,6 @@ from create_image_embeddings import create_image_embedding
 import requests
 import base64
 
-# Function to draw bounding boxes and extract labeled objects
-def process_image(image_path, boxes, labels):
-    # Load the image
-    image = Image.open(image_path)
-    
-    # Convert RGBA to RGB if necessary
-    if image.mode == 'RGBA':
-        image = image.convert('RGB')
-    
-    draw = ImageDraw.Draw(image)
-    
-    # Font for the label
-    try:
-        font = ImageFont.truetype("arial.ttf", 15)
-    except IOError:
-        font = ImageFont.load_default()
-
-    # Counter for unique filenames
-    crop_count = 1 
-    
-    # Draw bounding boxes around specific label of interest (ex. shoe) and extract labeled objects
-    for box, label in zip(boxes, labels):
-    
-        # Change to specific label you are looking to extract
-        if label not in "Shoe":
-            continue
-        
-        # Box coordinates
-        left = int(image.width * box['Left'])
-        top = int(image.height * box['Top'])
-        right = left + int(image.width * box['Width'])
-        bottom = top + int(image.height * box['Height'])
-            
-        # Crop the image to the bounding box
-        cropped_image = image.crop((left, top, right, bottom))
-    
-        # Draw label on the cropped image
-        cropped_draw = ImageDraw.Draw(cropped_image)
-    
-        # File name for the output
-        file_name = f"extract_{crop_count}.jpg"
-        # Save extracted object image locally
-        cropped_image.save(file_name)
-        print(f"Saved extracted object image: {file_name}")
-        crop_count += 1
-    
-    # Save or display the image with bounding boxes
-    image.show()
-
-
 def download_image(url):
     response = requests.get(url)
     if response.status_code == 200:
