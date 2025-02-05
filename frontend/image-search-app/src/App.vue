@@ -37,11 +37,6 @@
           </div>
         </div>
 
-        <!-- 顯示完整 API 回應 -->
-        <div v-if="fullResponse" class="response-container">
-          <h3>API Response:</h3>
-          <pre>{{ fullResponse }}</pre>
-        </div>
       </div>
     </div>
   </div>
@@ -97,18 +92,22 @@ export default {
         // 儲存完整的 API 回應（格式化 JSON 以便顯示）
         this.fullResponse = JSON.stringify(response.data, null, 2);
 
-        // 檢查是否有回傳圖片
-        if (response.data.images) {
+        // 確保 `images` 存在並且是物件
+        if (response.data.images && typeof response.data.images === "object") {
           this.searchResults = Object.values(response.data.images).map((imageBase64) => {
             return `data:image/jpeg;base64,${imageBase64}`;
           });
+        } else {
+          console.error("Invalid image data format:", response.data.images);
+          this.errorMessage = "Invalid image data format received from server.";
         }
       } catch (error) {
         this.errorMessage = error.response?.data?.message || error.message || "An error occurred while searching.";
       } finally {
-        this.isLoading = false;
-      }
-    },
+    this.isLoading = false;
+  }
+},
+
   },
 };
 </script>
