@@ -8,3 +8,5 @@ cd image-search-app
 npm install
 npm run dev
 ```
+
+![](src/img/img1.png)
