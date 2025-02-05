@@ -1,7 +1,2 @@
-src/
+/src/
 __pycache__/
-
-```
-npx create-react-app image-search-app
-````
-`
