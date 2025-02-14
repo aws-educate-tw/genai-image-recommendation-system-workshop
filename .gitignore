@@ -29,4 +29,5 @@ dist-ssr
 
 # build output
 /src/
+__pycache__/
 link.txt
