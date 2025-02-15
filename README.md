@@ -10,3 +10,8 @@ npm run dev
 ```
 
 ![](src/img/img1.png)
+
+### Key Concepts
+- [ ] GenAI concepts
+  - [ ] RAG
+  - [ ] Prompt Engineering 
