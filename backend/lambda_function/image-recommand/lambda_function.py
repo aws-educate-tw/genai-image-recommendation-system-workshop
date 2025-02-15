@@ -1,4 +1,6 @@
-# 呼叫入口
+"""
+This is the Lambda function for the image recommendation system.
+"""
 import json
 from embedding_searching_target import create_test_image_embedding
 from reverse_image_search import display_top_k_results
@@ -7,13 +9,21 @@ import boto3
 import base64
 
 def lambda_handler(event, context):
+    """
+    param: event: API Gateway event
+    return: response: API Gateway response
+    exception: None
+    description: Lambda function for image recommendation system
+    """
     client = initialize_opensearch_client()
-    print(json.dumps(event))  # 可用來查看完整的事件資料
-    print("Event:", json.dumps(event, indent=2))
+    # print(json.dumps(event)) 
+    # print("Event:", json.dumps(event, indent=2))
 
-    # 確保 HTTP 方法的取得方式正確
     http_method = event["requestContext"]["http"]["method"]
 
+    # Due to the preflight request, we need to handle the OPTIONS method
+    # preflight request means that the browser is checking if the server allows a certain request
+    # CORS (Cross-Origin Resource Sharing) is a security feature implemented in browsers that restricts websites from making requests to a different domain than the one that served the original web page
     if http_method == "OPTIONS":
         return {
             "statusCode": 200,
@@ -25,27 +35,18 @@ def lambda_handler(event, context):
             "body": ""
         }
     else:
-        # 解析body部分（假設body已經是字串格式）
-        body = event.get('body')  # 使用get()來避免KeyError
-        
-        # 將JSON字串轉換為Python字典
-        body_json = json.loads(body)
-        
-        # 從解析後的字典中取得search_image_url
+        body = event.get('body')          
+        body_json = json.loads(body)        
         search_image_url = body_json.get('search_image_url')
 
-        # print(event)
-        # # 從 event 取得 search_image_url，如果未提供則預設為空字串
-        # search_image_url = event.get("search_image_url", "")
         if search_image_url:
-        
-            # 產生圖片的嵌入特徵
+            # Create image embedding
             embedded_image = create_test_image_embedding(search_image_url)
-            
-            # 執行搜尋並獲取結果
+
+            # Search for similar images in OpenSearch
             similar_images_list, similar_images_key_list = display_top_k_results(client, embedded_image)
 
-            # 從 s3 取得圖片
+            # Retrieve images from S3 bucket
             BUCKET_NAME = "images-for-0307workshop-test1"
             s3 = boto3.client('s3')
             images = {}

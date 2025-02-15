@@ -1,20 +1,21 @@
-# store these vectors so they can be searched and retrieved efficiently. To do so, we can use a vector database.
+"""
+This script is used to connect to the Amazon OpenSearch Serverless collection.
+"""
 import boto3
-# Import required libraries to connect to Amazon OpenSearch Serverless connection
 from opensearchpy import OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
-from requests_aws4auth import AWS4Auth
 
-# Initialize endpoint name constant
 HOST = "abc.us-west-2.aoss.amazonaws.com" # OpenSearch endpoint. For example, abcdefghi.us-east-1.aoss.amazonaws.com (without https://)
 REGION = "us-west-2" # OpenSearch region
 service = 'aoss' # OpenSearch service name
 
-# connect to your Amazon OpenSearch Serverless collection.
 def initialize_opensearch_client():
-    
-    # Initialize and authenticate with the OpenSearch client
+    """
+    param: None
+    return: OpenSearch client object
+    exception: None
+    description: Initialize OpenSearch client
+    """
     credentials = boto3.Session().get_credentials()
-    awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, REGION, 'aoss', session_token=credentials.token)
     auth = AWSV4SignerAuth(credentials, REGION, service)
 
     client = OpenSearch(
@@ -26,4 +27,3 @@ def initialize_opensearch_client():
         pool_maxsize=300
     )
     return client
-

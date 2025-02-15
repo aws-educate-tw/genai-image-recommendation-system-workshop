@@ -1,26 +1,43 @@
-# Import required libraries
+"""
+This script generates image embeddings for all images in an S3 bucket using the Amazon Bedrock Multimodal Embeddings model.
+"""
 import boto3
 import pandas as pd
 import base64
 import json
-from PIL import Image
+from PIL import Image, ImageFile
 import io
+import time
 
-# Constants, change to your S3 bucket name and selected AWS region
-BUCKET_NAME = "images-for-0307workshop-test1"
+BUCKET_NAME = "photo-gallery-bucket-ws0307"
 BEDROCK_MODEL_ID = "amazon.titan-embed-image-v1"
 REGION = "us-west-2"
+# Set the flag to avoid PIL error when loading truncated images
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+
 # Define max width and height for resizing to accommodate Bedrock limits
 MAX_WIDTH = 1024  
 MAX_HEIGHT = 1024  
 
 
 def initialize_s3_client():
-    # Initialize AWS clients
+    """
+    param: None
+    return: s3 client object
+    exception: None
+    description: Initialize AWS clients
+    """
     s3 = boto3.client('s3')
     return s3
 
 def initialize_bedrock_client():
+    """
+    param: None
+    return: bedrock client object
+    exception: None
+    description: Initialize AWS clients
+    """
     bedrock_client = boto3.client(
         "bedrock-runtime", 
         REGION, 
@@ -31,29 +48,52 @@ def initialize_bedrock_client():
 BEDROCK_CLIENT = initialize_bedrock_client()
 S3 = initialize_s3_client()
 
-# Retrieve images stored in S3 bucket 
 def retrieve_images_from_s3():
+    """
+    param: None
+    return: list of objects in S3 bucket
+    exception: None
+    description: Retrieve images stored in S3 bucket, including subfolders
+    """
+    image_num = 0
     global BUCKET_NAME, S3
-    response = S3.list_objects_v2(Bucket=BUCKET_NAME)
-    contents = response.get('Contents', [])
+    paginator = S3.get_paginator('list_objects_v2') # Create a paginator object, which allows you to iterate over pages of S3 objects
+    contents = []
+    for page in paginator.paginate(Bucket=BUCKET_NAME):
+        for obj in page.get('Contents', []):
+            image_num += 1
+            contents.append(obj)
+    print(f"Found {image_num} images in S3 bucket")
+    time.sleep(2)
     return contents
 
-# Function to resize image
 def resize_image(image_data):
+    """
+    param: image_data(type: bytes)  
+    return: resized image
+    exception: None
+    description: Resize image while maintaining aspect ratio
+    """
     image = Image.open(io.BytesIO(image_data))
+    if image.mode != "RGB":
+        image = image.convert("RGB")
 
     # Resize image while maintaining aspect ratio
     image.thumbnail((MAX_WIDTH, MAX_HEIGHT))
 
-    # Save resized image to bytes buffer
     buffer = io.BytesIO()
     image.save(buffer, format="JPEG")
     buffer.seek(0)
 
     return buffer.read()
 
-# Function to create embedding from input image
 def create_image_embedding(image):
+    """
+    param: image(type: base64 encoded image)
+    return: embedding value
+    exception: None
+    description: Create embedding from input image by invoking multomodal embeddings model in Amazon Bedrock
+    """
     global BEDROCK_CLIENT, BEDROCK_MODEL_ID
     image_input = {}
 
@@ -63,30 +103,39 @@ def create_image_embedding(image):
         raise ValueError("Image input is required")
 
     image_body = json.dumps(image_input)
+    try:
+        bedrock_response = BEDROCK_CLIENT.invoke_model(
+            body=image_body,
+            modelId=BEDROCK_MODEL_ID,
+            accept="application/json",
+            contentType="application/json"
+        )
 
-    # Invoke Amazon Bedrock with encoded image body
-    bedrock_response = BEDROCK_CLIENT.invoke_model(
-        body=image_body,
-        modelId=BEDROCK_MODEL_ID,
-        accept="application/json",
-        contentType="application/json"
-    )
-
-    # Retrieve body in JSON response
-    final_response = json.loads(bedrock_response.get("body").read())
-
-    embedding_error = final_response.get("message")
+        final_response = json.loads(bedrock_response.get("body").read())
+        embedding_error = final_response.get("message")
+    except Exception as e:
+        if e.response['Error']['Code'] in ['ThrottlingException', 'RateLimitExceeded']:
+            # Exponential backoff: increase the backoff time on each retry
+            print(f"Throttling detected. Retrying in {2} seconds...")
+            time.sleep(2)
+        else:
+            raise e
 
     if embedding_error is not None:
         print (f"Error creating embeddings: {embedding_error}")
 
-    # Return embedding value
     return final_response.get("embedding")
 
-# Because you will be performing a search for similar images stored in the S3 bucket, you will also have to store the image file name as metadata for its embedding. Also, because the model expects a base64 encoded image as input, you will have to create an encoded version of the image for the embedding function.
 def embed_images():
+    """
+    param: None
+    return: final_embeddings_dataset
+    exception: None
+    description: The entry point for the script to generate image embeddings for all images in an S3 bucket
+    """
     global BUCKET_NAME
     contents = retrieve_images_from_s3()
+
     # Define arrays to hold embeddings and image file key names
     image_embeddings = []
     image_file_names = []
@@ -108,13 +157,9 @@ def embed_images():
         image_embeddings.append(image_embedding)
         image_file_names.append(obj["Key"])
 
+    # End of loop
     print("Embeddings generated for all images in S3 bucket")
 
     # Add and list embeddings with associated image file key to dataframe object
     final_embeddings_dataset = pd.DataFrame({'image_key': image_file_names, 'image_embedding': image_embeddings})
-    print(final_embeddings_dataset.head())
-
     return final_embeddings_dataset
-
-if __name__ == "__main__":
-    embed_images()
