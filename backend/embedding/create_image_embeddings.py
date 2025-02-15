@@ -5,13 +5,16 @@ import boto3
 import pandas as pd
 import base64
 import json
-from PIL import Image
+from PIL import Image, ImageFile
 import io
 import time
 
 BUCKET_NAME = "photo-gallery-bucket-ws0307"
 BEDROCK_MODEL_ID = "amazon.titan-embed-image-v1"
 REGION = "us-west-2"
+# Set the flag to avoid PIL error when loading truncated images
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 
 # Define max width and height for resizing to accommodate Bedrock limits
 MAX_WIDTH = 1024  
