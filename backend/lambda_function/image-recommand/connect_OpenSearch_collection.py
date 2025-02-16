@@ -3,10 +3,11 @@ This script is used to connect to the Amazon OpenSearch Serverless collection.
 """
 import boto3
 from opensearchpy import OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
+import os
 
-HOST = "abc.us-west-2.aoss.amazonaws.com" # OpenSearch endpoint. For example, abcdefghi.us-east-1.aoss.amazonaws.com (without https://)
-REGION = "us-west-2" # OpenSearch region
-service = 'aoss' # OpenSearch service name
+HOST = os.environ.get("HOST") # OpenSearch endpoint. For example, abcdefghi.us-east-1.aoss.amazonaws.com (without https://)
+REGION = os.environ.get("REGION") 
+service = 'aoss'
 
 def initialize_opensearch_client():
     """
