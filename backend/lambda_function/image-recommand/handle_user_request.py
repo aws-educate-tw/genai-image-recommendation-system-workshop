@@ -1,5 +1,5 @@
 """
-This script is used to handle the user input image URL and create the image embedding. Then it will ingest the image embedding into Amazon OpenSearch Service.
+This script is used to handle user's text input and image input.
 """
 from create_image_embeddings import create_image_embedding, create_word_embedding
 from upload_to_s3 import upload_image_to_s3
