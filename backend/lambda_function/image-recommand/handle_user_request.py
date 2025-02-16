@@ -2,7 +2,6 @@
 This script is used to handle user's text input and image input.
 """
 from create_image_embeddings import create_image_embedding, create_word_embedding
-from upload_to_s3 import upload_image_to_s3
 import requests
 import base64
 import os
