@@ -3,7 +3,6 @@ This script is used to upload the image to S3 bucket.
 """
 import boto3
 
-# Initialize the S3 client
 def initialize_s3_client():
     """
     param: None
