@@ -8,7 +8,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
+node_modulesgit
 dist
 dist-ssr
 *.local
@@ -33,3 +33,6 @@ dist-ssr
 
 __pycache__/
 link.txt
+backend/photo_gallery_generator/.env
+photo-gallery/
+test/
