@@ -1,21 +1,29 @@
+"""
+This module contains the functions to search the OpenSearch index for similar images
+"""
 import os
 from PIL import Image
 from connect_OpenSearch_collection import initialize_opensearch_client
 import boto3
 
-
 s3 = boto3.client('s3')
 client = initialize_opensearch_client()
 region = "us-west-2"
-VECTOR_NAME = "vectors"
-VECTOR_MAPPING = "image_file"
-INDEX_NAME = "image_vectors"
-BUCKET_NAME = "images-for-0307workshop-test1"
+VECTOR_NAME = os.environ.get("VECTOR_NAME")
+VECTOR_MAPPING = os.environ.get("VECTOR_MAPPING")
+INDEX_NAME = os.environ.get("INDEX_NAME")
+BUCKET_NAME = os.environ.get("BUCKET_NAME")
 
-# define the number of results to retrieve from the index and invoke the Amazon OpenSearch Service client with a search request
 def search_index(client, object_embedding):
+    """
+    param: client: OpenSearch client object
+    param: object_embedding: image embedding
+    return: list of similar images
+    exception: None
+    description: Search the OpenSearch index for similar images
+    """
     # Define number of images to search and retrieve
-    K_SEARCHES = 3
+    K_SEARCHES = 15
 
     # Define search configuration body for K-NN 
     body = {
@@ -55,14 +63,16 @@ def search_index(client, object_embedding):
     # Print Top K closest matches
     print(f"Top {K_SEARCHES} closest embeddings and associated scores: {result}")
     return result
-    
-# fetch each specific image to display the results
-# Function to display image
-def display_image(image_path):
-    image = Image.open(image_path)
-    image.show()
 
 def display_top_k_results(client, object_embedding):
+    """
+    param: client: OpenSearch client object
+    param: object_embedding: image embedding
+    return: list of similar images
+    exception: None
+    description: Display the top K similar images
+    """
+
     similar_images_list = [] # List to store similar images' public URLs
     similar_images_key_list = [] # List to store similar images' keys
     # List of image file names from the K-NN search
@@ -83,15 +93,11 @@ def display_top_k_results(client, object_embedding):
         file_name = file_path.split("/")[-1]
     
         s3.download_file(Bucket = BUCKET_NAME, Key = file_path, Filename = "/tmp/"+file_name)
-        # Open downloaded image and display it
-        # display_image(local_path)
-        print(f"Downloaded image: {file_path}")
-        print()
+
         # store the similar images in a list
         # https://<bucket-name>.s3.<region>.amazonaws.com/<key>
         public_url = f"https://{BUCKET_NAME}.s3.{region}.amazonaws.com/{file_path}"
         similar_images_list.append(public_url)
         similar_images_key_list.append(file_path)
 
-    # return all similar images
     return similar_images_list, similar_images_key_list
