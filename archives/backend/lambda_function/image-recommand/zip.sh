@@ -1,0 +1,1 @@
+zip lambda.zip embedding_searching_target.py connect_OpenSearch_collection.py create_image_embeddings.py  lambda_function.py  reverse_image_search.py
