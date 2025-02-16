@@ -1,2 +1,5 @@
 __pycache__/
 link.txt
+backend/photo_gallery_generator/.env
+photo-gallery/
+test/
