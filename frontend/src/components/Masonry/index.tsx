@@ -8,10 +8,6 @@ const Masonry = () => {
     const selectedMode = useAppSelector(getSelectedMode)
     const images = useAppSelector(getImages)
 
-    useEffect(() => {
-        console.log("images", images)
-    }, [images])
-    
     return (
         <div className="pt-16 flex">
             <div
