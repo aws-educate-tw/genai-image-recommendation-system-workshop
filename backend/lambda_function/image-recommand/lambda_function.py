@@ -2,7 +2,7 @@
 This is the Lambda function for the image recommendation system.
 """
 import json
-from embedding_searching_target import create_test_image_embedding
+from handle_user_request import handle_user_input_image
 from reverse_image_search import display_top_k_results
 from connect_OpenSearch_collection import initialize_opensearch_client
 import boto3
@@ -11,15 +11,22 @@ import base64
 def lambda_handler(event, context):
     """
     param: event: API Gateway event
-    return: response: API Gateway response
+    param: context: Lambda context
+    return: dict: API Gateway response
     exception: None
-    description: Lambda function for image recommendation system
+    description: 
+        This is the entry point for the Lambda function. 
+        First, it handle the request by checking the request is from browser or not. If it is from browser, it will return the CORS headers. 
+        Then, it will extract the search image from the request body and pass it to the image recommendation system. 
+        Finally, it will return the search results to the browser.
     """
-    client = initialize_opensearch_client()
+    
     # print(json.dumps(event)) 
-    # print("Event:", json.dumps(event, indent=2))
-
-    http_method = event["requestContext"]["http"]["method"]
+    if "requestContext" in event and "http" in event["requestContext"]:
+        http_method = event["requestContext"].get("httpMethod", "POST")  # 若無則預設為 POST
+        # http_method = event["requestContext"]["httpMethod"]
+    else:
+        http_method = "POST"  # 直接 Lambda 觸發時
 
     # Due to the preflight request, we need to handle the OPTIONS method
     # preflight request means that the browser is checking if the server allows a certain request
@@ -35,19 +42,23 @@ def lambda_handler(event, context):
             "body": ""
         }
     else:
-        body = event.get('body')          
-        body_json = json.loads(body)        
-        search_image_url = body_json.get('search_image_url')
+        body = event.get('body', '{}') 
+        if body == "{}":
+            search_image = event.get('search_image') 
+        else:
+            body_json = json.loads(body)        
+            search_image = body_json.get('search_image')
 
-        if search_image_url:
+        if search_image:
             # Create image embedding
-            embedded_image = create_test_image_embedding(search_image_url)
+            embedded_image = handle_user_input_image(search_image)
 
             # Search for similar images in OpenSearch
+            client = initialize_opensearch_client()
             similar_images_list, similar_images_key_list = display_top_k_results(client, embedded_image)
 
             # Retrieve images from S3 bucket
-            BUCKET_NAME = "images-for-0307workshop-test1"
+            BUCKET_NAME = "photo-gallery-bucket-ws0307"
             s3 = boto3.client('s3')
             images = {}
             for key in similar_images_key_list:
@@ -58,12 +69,12 @@ def lambda_handler(event, context):
             return {
                 "statusCode": 200,
                 "body": json.dumps({
-                    "search_image_url": search_image_url,
+                    "search_image": search_image,
                     "results": similar_images_list,
                     "images": images
                 })
             }
     return {
         'statusCode': 400,
-        'body': json.dumps({'error': 'search_image_url not found'})
+        'body': json.dumps({'error': 'search_image not found'})
     }
