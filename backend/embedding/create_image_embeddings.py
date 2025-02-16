@@ -12,14 +12,11 @@ import time
 BUCKET_NAME = "photo-gallery-bucket-ws0307"
 BEDROCK_MODEL_ID = "amazon.titan-embed-image-v1"
 REGION = "us-west-2"
-# Set the flag to avoid PIL error when loading truncated images
-ImageFile.LOAD_TRUNCATED_IMAGES = True
-
+ImageFile.LOAD_TRUNCATED_IMAGES = True # Set the flag to avoid PIL error when loading truncated images
 
 # Define max width and height for resizing to accommodate Bedrock limits
 MAX_WIDTH = 1024  
 MAX_HEIGHT = 1024  
-
 
 def initialize_s3_client():
     """
