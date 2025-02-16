@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { setStatus, getStatus, getSelectedMode, getImages } from '../../features/ControllSlices';
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { Share2, MoreHorizontal } from 'lucide-react';
@@ -7,6 +7,10 @@ const Masonry = () => {
     const status = useAppSelector(getStatus)
     const selectedMode = useAppSelector(getSelectedMode)
     const images = useAppSelector(getImages)
+
+    useEffect(() => {
+        console.log("images", images)
+    }, [images])
     
     return (
         <div className="pt-16 flex">
@@ -26,7 +30,7 @@ const Masonry = () => {
                     onClick={() => console.log(image.id)}
                 >
                     <img 
-                    src={image.url} 
+                    src={image.base64 !== '' ? image.base64 : image.url} 
                     className="w-full rounded-lg object-cover"
                     />
                     <div className="opacity-0 group-hover:opacity-100 absolute bottom-2 right-2 flex space-x-2">

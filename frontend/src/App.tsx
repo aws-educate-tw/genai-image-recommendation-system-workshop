@@ -4,8 +4,6 @@ import Masonry from "./components/Masonry"
 import QueryCard from "./components/QueryCrad"
 import Loader from "./components/Loader"
 
-import logo from "./logo.svg"
-
 const App = () => {
   return (
     <div className="App">
