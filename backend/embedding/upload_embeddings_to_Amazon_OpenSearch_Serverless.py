@@ -1,12 +1,13 @@
 """
 This script is used to ingest the image embeddings into Amazon OpenSearch Service.
 """
+import os
 import tqdm as tq
-from create_image_embeddings import embed_images
-from opensearchpy import OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
+from opensearchpy import OpenSearch, RequestsHttpConnection, AWSV4SignerAuth, helpers
 from requests_aws4auth import AWS4Auth
 import boto3
 import time
+import pandas as pd
 
 INDEX_NAME = "image_vectors"
 VECTOR_NAME = "vectors"
@@ -19,7 +20,7 @@ def initialize_opensearch_client():
     exception: None
     description: Initialize OpenSearch client
     """
-    HOST = "ft9k300rv6bp5ul8q6o1.us-west-2.aoss.amazonaws.com" # OpenSearch endpoint. For example, abcdefghi.us-east-1.aoss.amazonaws.com (without https://)
+    HOST = os.getenv("OPENSEARCH_HOST") # OpenSearch endpoint
     REGION = "us-west-2" # OpenSearch region
     service = 'aoss' # OpenSearch service name
     
@@ -46,23 +47,21 @@ def ingest_embeddings():
     vector index with associate vector and text mapping fields
     """
     client = initialize_opensearch_client()
-    final_embeddings_dataset = embed_images()
+    embeddings_files = os.listdir("data")
+    for file in embeddings_files:
+        final_embeddings_dataset = pd.read_pickle(f"data/{file}")
 
-    # Ingest embeddings into vector index with associate vector and text mapping fields
-    for idx, record in tq.tqdm(final_embeddings_dataset.iterrows(), total=len(final_embeddings_dataset)):
-        print(f"Indexing record {idx}, vector_name: {record['image_embedding']}, vector_mapping: {record['image_key']}")
-        """
-        in index() function, the body parameter is a dictionary with the following structure:
-        :arg index: Name of the data stream or index to target.
-        :arg body: The document
-        """
-        # idx: the index of the record
-        body = {
-            VECTOR_NAME: record['image_embedding'], # VECTOR_NAME: the embedding vector
-            VECTOR_MAPPING: record['image_key'] # VECTOR_MAPPING: the image file path name in S3
-        }
-        response = client.index(index=INDEX_NAME, body=body)
-    print("Ingested embeddings successfully into OpenSearch", response)
+        # Ingest embeddings into vector index with associate vector and text mapping fields
+        actions = []
+        for idx, record in tq.tqdm(final_embeddings_dataset.iterrows(), total=len(final_embeddings_dataset)):
+            actions.append({
+                "_index": INDEX_NAME, 
+                VECTOR_NAME: record['image_embedding'], 
+                VECTOR_MAPPING: record['image_url']
+            })
+        helpers.bulk(client, actions)
+        
+        print(f"{file}: Ingested embeddings successfully into OpenSearch", len(actions))
 
 if __name__ == "__main__":
     # calculate the running time

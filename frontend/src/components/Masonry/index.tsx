@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { setStatus, getStatus, getSelectedMode, getImages } from '../../features/ControllSlices';
-import { useAppDispatch, useAppSelector } from '../../app/hooks'
+import { getStatus, getSelectedMode, getImages } from '../../features/ControllSlices';
+import { useAppSelector } from '../../app/hooks'
 import { Share2, MoreHorizontal } from 'lucide-react';
 
 const Masonry = () => {

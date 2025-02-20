@@ -1,10 +1,8 @@
-import React, { useEffect} from 'react'
+import { useEffect} from 'react'
 import { setStatus, getStatus, getSelectedMode, getQuery, getIsSearching, setIsSearching, setImages } from '../../features/ControllSlices';
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { Search } from 'lucide-react';
 import { useSearchByImageMutation } from '../../api/SearchSlice';
 import toast, { Toaster } from 'react-hot-toast';
-import axios from 'axios';
 
 const QueryCard = () => {
     const dispatch = useAppDispatch()
@@ -13,13 +11,10 @@ const QueryCard = () => {
     const query = useAppSelector(getQuery)
     const isSearching = useAppSelector(getIsSearching)
 
+    console.log(import.meta.env.VITE_API_URL)
+
     const [
-            searchByImage,
-            {
-              isLoading: querySearchLoading,
-              isSuccess: querySearchSuccess,
-              error: querySearchError,
-            },
+        searchByImage
     ] = useSearchByImageMutation()
 
     const handleSearchSubmit = () => {

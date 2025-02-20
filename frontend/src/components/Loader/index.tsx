@@ -1,11 +1,9 @@
-import React from 'react'
 import { DotLoader } from 'react-spinners';
 import { useAppSelector } from '../../app/hooks';
-import { getIsSearching, getStatus, getSelectedMode } from '../../features/ControllSlices';
+import { getIsSearching, getSelectedMode } from '../../features/ControllSlices';
 
 const Loader = () => {
     const isSearching = useAppSelector(getIsSearching)
-    const status = useAppSelector(getStatus)
     const selectedMode = useAppSelector(getSelectedMode)
 
     return (
