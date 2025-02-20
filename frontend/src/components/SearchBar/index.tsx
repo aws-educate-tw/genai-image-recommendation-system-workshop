@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { setStatus, setSelectedMode, getSelectedMode, setQuery, getQuery, setIsSearching, getIsSearching, setImages } from '../../features/ControllSlices';
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { Search, Send, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { useSearchByTextMutation } from '../../api/SearchSlice';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -26,11 +26,6 @@ const SearchBar = () => {
 
     const [
         searchByText,
-        {
-          isLoading: querySearchLoading,
-          isSuccess: querySearchSuccess,
-          error: querySearchError,
-        },
     ] = useSearchByTextMutation()
 
     const handleModeToggle = () => {
