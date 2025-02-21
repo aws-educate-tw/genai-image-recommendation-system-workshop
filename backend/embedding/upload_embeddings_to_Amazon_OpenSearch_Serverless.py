@@ -11,7 +11,7 @@ import pandas as pd
 
 INDEX_NAME = "image_vectors"
 VECTOR_NAME = "vectors"
-VECTOR_MAPPING = "image_file"
+VECTOR_MAPPING = "image_files"
 
 def initialize_opensearch_client():
     """
@@ -20,7 +20,7 @@ def initialize_opensearch_client():
     exception: None
     description: Initialize OpenSearch client
     """
-    HOST = os.environ.get("HOST") # OpenSearch endpoint
+    HOST = "an4iqlvpgewiue8fx82h.us-west-2.aoss.amazonaws.com" # OpenSearch endpoint
     REGION = "us-west-2" # OpenSearch region
     service = 'aoss' # OpenSearch service name
     
@@ -48,11 +48,16 @@ def ingest_embeddings():
     """
     client = initialize_opensearch_client()
     now_path = os.path.dirname(__file__)
+    print(now_path)
+    # get embeddings from the data folder
 
-    embeddings_files = os.listdir("data")
+
+    embeddings_files = os.listdir(os.path.join(now_path, "data"))
     for file in embeddings_files:
+        # print(file)
         path = os.path.join(now_path, f"data/{file}")
         final_embeddings_dataset = pd.read_pickle(path)
+        # print(f"Read embeddings from {final_embeddings_dataset}")
 
         # Ingest embeddings into vector index with associate vector and text mapping fields
         actions = []
