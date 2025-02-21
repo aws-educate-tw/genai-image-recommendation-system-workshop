@@ -70,17 +70,26 @@ resource "aws_apigatewayv2_integration" "lambda_integration" {
   integration_uri  = aws_lambda_function.image_searching_engine.invoke_arn
 }
 
+# ANY route
+
+# resource "aws_apigatewayv2_route" "any_route" {
+#   api_id    = aws_apigatewayv2_api.http_api.id
+#   route_key = "$default"
+#   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+# }
+
 resource "aws_apigatewayv2_route" "post_route" {
   api_id    = aws_apigatewayv2_api.http_api.id
   route_key = "POST /"
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
-resource "aws_apigatewayv2_route" "options_route" {
-  api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "OPTIONS /"
-  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
-}
+# 把 OPTIONS 去掉，讓 API gateway 處理
+# resource "aws_apigatewayv2_route" "options_route" {
+#   api_id    = aws_apigatewayv2_api.http_api.id
+#   route_key = "OPTIONS /"
+#   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+# }
 
 resource "aws_lambda_permission" "apigw" {
   action        = "lambda:InvokeFunction"
