@@ -25,7 +25,7 @@ const Masonry = () => {
                     onClick={() => console.log(image.id)}
                 >
                     <img 
-                    src={image.base64 !== '' ? image.base64 : image.url} 
+                    src={image.url} 
                     className="w-full rounded-lg object-cover"
                     />
                     <div className="opacity-0 group-hover:opacity-100 absolute bottom-2 right-2 flex space-x-2">

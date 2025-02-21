@@ -5,7 +5,7 @@ import boto3
 from opensearchpy import OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
 import os
 
-HOST = os.environ.get("HOST") # OpenSearch endpoint. For example, abcdefghi.us-east-1.aoss.amazonaws.com (without https://)
+HOST = os.environ.get("OPENSEARCH_HOST") # OpenSearch endpoint. For example, abcdefghi.us-east-1.aoss.amazonaws.com (without https://)
 REGION = "us-west-2"
 service = 'aoss'
 

@@ -57,17 +57,11 @@ const SearchBar = () => {
                         // console.log(searchResults)
             
             const results = searchResults.results;
-            const images = searchResults.images;
 
-            const formattedImages = results.map((url: string, index: number) => {
-                const filename = url.split('amazonaws.com/').pop(); // 取得網址最後的檔名
-                if (!filename) return null;
-                const base64 = images[filename] || ''; // 從 images 物件中取得對應的 base64
-    
+            const formattedImages = results.map((url: string, index: number) => {    
                 return {
                     id: index + 1,
                     url: url,
-                    base64: 'data:image/jpeg;base64,' + base64,
                 };
             });
 
