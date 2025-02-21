@@ -5,8 +5,6 @@ import json
 from handle_user_request import handle_user_input_image
 from reverse_image_search import display_top_k_results
 from connect_OpenSearch_collection import initialize_opensearch_client
-import boto3
-import base64
 
 def lambda_handler(event, context):
     """
@@ -22,8 +20,8 @@ def lambda_handler(event, context):
     """
     
     # print(json.dumps(event)) 
-    if "requestContext" in event and "http" in event["requestContext"]:
-        http_method = event["requestContext"].get("httpMethod", "POST")  # 若無則預設為 POST
+    if "requestContext" in event and "httpMethod" in event["requestContext"]:
+        http_method = event["requestContext"].get("httpMethod")  # 若無則預設為 POST
         # http_method = event["requestContext"]["httpMethod"]
     else:
         http_method = "POST"  # 直接 Lambda 觸發時
@@ -56,6 +54,7 @@ def lambda_handler(event, context):
             # Search for similar images in OpenSearch
             client = initialize_opensearch_client()
             similar_images_list = display_top_k_results(client, embedded_image)
+            print("similar_images_list", len(similar_images_list))
 
             return {
                 "statusCode": 200,

@@ -20,7 +20,7 @@ def initialize_opensearch_client():
     exception: None
     description: Initialize OpenSearch client
     """
-    HOST = "an4iqlvpgewiue8fx82h.us-west-2.aoss.amazonaws.com" # OpenSearch endpoint
+    HOST = os.getenv("OPENSEARCH_HOST") # OpenSearch host
     REGION = "us-west-2" # OpenSearch region
     service = 'aoss' # OpenSearch service name
     
