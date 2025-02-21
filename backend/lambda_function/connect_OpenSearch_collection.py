@@ -6,7 +6,7 @@ from opensearchpy import OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
 import os
 
 HOST = os.environ.get("HOST") # OpenSearch endpoint. For example, abcdefghi.us-east-1.aoss.amazonaws.com (without https://)
-REGION = os.environ.get("REGION") 
+REGION = "us-west-2"
 service = 'aoss'
 
 def initialize_opensearch_client():
