@@ -67,7 +67,8 @@ def ingest_embeddings():
                 VECTOR_NAME: record['image_embedding'], 
                 VECTOR_MAPPING: record['image_url']
             })
-        helpers.bulk(client, actions)
+        response = helpers.bulk(client, actions)
+        print(response)
         
         print(f"{file}: Ingested embeddings successfully into OpenSearch", len(actions))
 
