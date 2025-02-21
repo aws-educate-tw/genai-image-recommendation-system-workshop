@@ -8,9 +8,9 @@ from requests_aws4auth import AWS4Auth
 import boto3
 import os
 
-INDEX_NAME = os.environ.get("INDEX_NAME")
-VECTOR_NAME = os.environ.get("VECTOR_NAME")
-VECTOR_MAPPING = os.environ.get("VECTOR_MAPPING")
+INDEX_NAME = "image_vectors"
+VECTOR_NAME = "vectors"
+VECTOR_MAPPING = "image_file"
 HOST = os.environ.get("HOST") 
 
 def initialize_opensearch_client():

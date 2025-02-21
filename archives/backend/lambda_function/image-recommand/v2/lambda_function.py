@@ -55,13 +55,23 @@ def lambda_handler(event, context):
 
             # Search for similar images in OpenSearch
             client = initialize_opensearch_client()
-            similar_images_list = display_top_k_results(client, embedded_image)
+            similar_images_list, similar_images_key_list = display_top_k_results(client, embedded_image)
 
+            # Retrieve images from S3 bucket
+            BUCKET_NAME = "photo-gallery-bucket-ws0307"
+            s3 = boto3.client('s3')
+            images = {}
+            for key in similar_images_key_list:
+                response = s3.get_object(Bucket=BUCKET_NAME, Key=key)
+                image_data = response['Body'].read()
+                images[key] = base64.b64encode(image_data).decode('utf-8')
+            
             return {
                 "statusCode": 200,
                 "body": json.dumps({
                     "search_image": search_image,
                     "results": similar_images_list,
+                    "images": images
                 })
             }
     return {

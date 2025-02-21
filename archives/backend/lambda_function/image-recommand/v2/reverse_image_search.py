@@ -11,7 +11,7 @@ client = initialize_opensearch_client()
 region = "us-west-2"
 INDEX_NAME = "image_vectors"
 VECTOR_NAME = "vectors"
-VECTOR_MAPPING = "image_files"
+VECTOR_MAPPING = "image_file"
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
 
 def search_index(client, object_embedding):
@@ -44,10 +44,7 @@ def search_index(client, object_embedding):
         }
 
     # Invoke OpenSearch to search through index with K-NN configurations
-    # response format: https://opensearch.org/docs/latest/api-reference/search/
     knn_response = client.search(index=INDEX_NAME, body=body)
-    
-
     result = []
     scores_tracked = set()  # Set to keep track of already retrieved images and their scores
 
@@ -79,7 +76,7 @@ def display_top_k_results(client, object_embedding):
     similar_images_list = [] # List to store similar images' public URLs
     similar_images_key_list = [] # List to store similar images' keys
     # List of image file names from the K-NN search
-    image_files = search_index(client, object_embedding) 
+    image_files = search_index(client, object_embedding)
 
     # Create a local directory to store downloaded images
     # download_dir = 'RESULTS'
@@ -90,12 +87,17 @@ def display_top_k_results(client, object_embedding):
 
     # Download and display each image that matches image query
     for file_name in image_files:
-        """
-        file_name[0] is the file path
-        file_name[1] is the score
-        """
         print("File Path: " + file_name[0])
         print("Score: " + str(file_name[1]))
-        similar_images_key_list.append(file_name[0])
+        file_path = file_name[0]
+        file_name = file_path.split("/")[-1]
+    
+        s3.download_file(Bucket = BUCKET_NAME, Key = file_path, Filename = "/tmp/"+file_name)
 
-    return similar_images_list
+        # store the similar images in a list
+        # https://<bucket-name>.s3.<region>.amazonaws.com/<key>
+        public_url = f"https://{BUCKET_NAME}.s3.{region}.amazonaws.com/{file_path}"
+        similar_images_list.append(public_url)
+        similar_images_key_list.append(file_path)
+
+    return similar_images_list, similar_images_key_list
