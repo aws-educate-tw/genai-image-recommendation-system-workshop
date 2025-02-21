@@ -85,11 +85,11 @@ resource "aws_apigatewayv2_route" "post_route" {
 }
 
 # 把 OPTIONS 去掉，讓 API gateway 處理
-# resource "aws_apigatewayv2_route" "options_route" {
-#   api_id    = aws_apigatewayv2_api.http_api.id
-#   route_key = "OPTIONS /"
-#   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
-# }
+resource "aws_apigatewayv2_route" "options_route" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "OPTIONS /"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
 
 resource "aws_lambda_permission" "apigw" {
   action        = "lambda:InvokeFunction"
