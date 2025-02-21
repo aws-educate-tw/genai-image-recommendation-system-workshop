@@ -1,14 +1,13 @@
 """
 This script is used to handle user's text input and image input.
 """
-from create_image_embeddings import create_image_embedding, create_word_embedding
+from backend.lambda_function.__create_image_embeddings import create_image_embedding, create_word_embedding
 import requests
 import base64
 import os
 from PIL import Image
 import re
 
-BUCKET_NAME = os.environ.get("BUCKET_NAME")
 
 def sanitize_s3_key(image_name):
     """

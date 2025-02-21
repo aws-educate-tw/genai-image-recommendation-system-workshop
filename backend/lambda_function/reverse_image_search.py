@@ -6,13 +6,11 @@ from PIL import Image
 from connect_OpenSearch_collection import initialize_opensearch_client
 import boto3
 
-s3 = boto3.client('s3')
 client = initialize_opensearch_client()
 region = "us-west-2"
 INDEX_NAME = "image_vectors"
 VECTOR_NAME = "vectors"
 VECTOR_MAPPING = "image_files"
-BUCKET_NAME = os.environ.get("BUCKET_NAME")
 
 def search_index(client, object_embedding):
     """
@@ -49,7 +47,7 @@ def search_index(client, object_embedding):
     
 
     result = []
-    scores_tracked = set()  # Set to keep track of already retrieved images and their scores
+    ids = set()  # Set to keep track of already retrieved images and their scores
 
     # Loop through response to print the closest matching results
     for hit in knn_response["hits"]["hits"]:
@@ -58,10 +56,11 @@ def search_index(client, object_embedding):
         item_id_ = hit["_source"][VECTOR_MAPPING]
 
         # Check if score has already been tracked, if not, add it to final result
-        if score not in scores_tracked:
+        if id_ not in ids:
             final_item = [item_id_, score]
+            print("final_item", final_item)
             result.append(final_item)
-            scores_tracked.add(score)  # Log score as tracked already
+            ids.add(id_)  # Log score as tracked already
 
     # Print Top K closest matches
     print(f"Top {K_SEARCHES} closest embeddings and associated scores: {result}")
@@ -81,13 +80,6 @@ def display_top_k_results(client, object_embedding):
     # List of image file names from the K-NN search
     image_files = search_index(client, object_embedding) 
 
-    # Create a local directory to store downloaded images
-    # download_dir = 'RESULTS'
-    download_dir = "/tmp/my_downloads"
-
-    # Create directory if not exists
-    os.makedirs(download_dir, exist_ok=True)
-
     # Download and display each image that matches image query
     for file_name in image_files:
         """
@@ -98,4 +90,4 @@ def display_top_k_results(client, object_embedding):
         print("Score: " + str(file_name[1]))
         similar_images_key_list.append(file_name[0])
 
-    return similar_images_list
+    return similar_images_key_list
