@@ -5,6 +5,7 @@ import json
 from handle_user_request import handle_user_input_image
 from reverse_image_search import display_top_k_results
 from connect_OpenSearch_collection import initialize_opensearch_client
+from retrieve_key_words import retrieve_key_words
 
 def lambda_handler(event, context):
     """
@@ -19,10 +20,8 @@ def lambda_handler(event, context):
         Finally, it will return the search results to the browser.
     """
     
-    # print(json.dumps(event)) 
     if "requestContext" in event and "httpMethod" in event["requestContext"]:
         http_method = event["requestContext"].get("httpMethod")  # 若無則預設為 POST
-        # http_method = event["requestContext"]["httpMethod"]
     else:
         http_method = "POST"  # 直接 Lambda 觸發時
 
@@ -40,6 +39,7 @@ def lambda_handler(event, context):
             "body": ""
         }
     else:
+        
         body = event.get('body', '{}') 
         if body == "{}":
             search_image = event.get('search_image') 
@@ -48,13 +48,19 @@ def lambda_handler(event, context):
             search_image = body_json.get('search_image')
 
         if search_image:
-            # Create image embedding
-            embedded_image = handle_user_input_image(search_image)
-
+            similar_images_list = []
+            key_word_list = retrieve_key_words(search_image)
             # Search for similar images in OpenSearch
             client = initialize_opensearch_client()
-            similar_images_list = display_top_k_results(client, embedded_image)
-            print("similar_images_list", len(similar_images_list))
+            
+            for key_word in key_word_list:
+                if key_word == "":
+                    continue
+                
+                # Create image embedding
+                embedded_image = handle_user_input_image(key_word)
+                result = display_top_k_results(client, embedded_image)
+                similar_images_list.extend(result)
 
             return {
                 "statusCode": 200,
