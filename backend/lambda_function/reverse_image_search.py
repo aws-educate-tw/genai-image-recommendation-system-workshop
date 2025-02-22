@@ -45,7 +45,6 @@ def search_index(client, object_embedding):
     # response format: https://opensearch.org/docs/latest/api-reference/search/
     knn_response = client.search(index=INDEX_NAME, body=body)
     
-
     result = []
     ids = set()  # Set to keep track of already retrieved images and their scores
 
@@ -75,7 +74,6 @@ def display_top_k_results(client, object_embedding):
     description: Display the top K similar images
     """
 
-    similar_images_list = [] # List to store similar images' public URLs
     similar_images_key_list = [] # List to store similar images' keys
     # List of image file names from the K-NN search
     image_files = search_index(client, object_embedding) 

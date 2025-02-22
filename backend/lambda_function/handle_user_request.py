@@ -51,7 +51,6 @@ def handle_user_input_image(user_input):
     exception: None
     description: Handle user input image
     """
-
     # judge the user_input is URL or key word
     if user_input.startswith("http://") or user_input.startswith("https://"):
         image_data = download_image(user_input)
