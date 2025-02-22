@@ -121,45 +121,42 @@ const SearchBar = () => {
             <Toaster
                 reverseOrder={false}
             />
-            <div
-            className={`relative rounded-lg transition-all duration-300 
-                ${isFocused ? 'md:w-[60%] lg:w-[70%]' : 'w-[40%]'}`}
-            >
-            <input
-                type="text"
-                disabled={isSearching}
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-                onKeyDown={handleSearchKeyDownSubmit}
-                className={`w-full p-2 pl-10  flex justify-left rounded-lg focus:outline-none bg-gray-100`}
-            />
-            {/* Search Icon */}
-            <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                size={20}
-            />
-            {!isFocused && query !== '' && modes[modeIndex] === 'Text mode' ? 
-            <button 
-                className={`absolute p-2 right-0 top-1/2 -translate-y-1/2 text-gray-400 rounded-lg hover:bg-gray-200 transition-all duration-300 ease-in-out`}
-                onClick={() => {
-                    dispatch(setQuery(''))
-                    setSearchTerm('')
-                }}
-            > <X size={20} />
-            </button> : null}
-            
-                
-            </div>
             <button
                 disabled={isSearching}
                 onClick={handleModeToggle}
-                className="relative w-40 h-9 left-4 -translate-y-0 px-2 py-1 rounded-lg border-0 bg-[#ff3856] text-white text-[15px] tracking-wider transition-all duration-300 ease-in-out shadow-[0px_6px_0px_0px_rgb(201,46,70)] hover:shadow-[0px_5px_0px_0px_rgb(201,46,70)] active:bg-[#ff3856] active:shadow-[0px_4px_0px_0px_rgb(201,46,70)] active:translate-y-1 active:transition-[transform] active:duration-200 cursor-pointer "
+                className="relative w-40 h-9 right-4 -translate-y-0 px-2 py-1 rounded-lg border-0 bg-[#ff3856] text-white text-[15px] tracking-wider transition-all duration-300 ease-in-out shadow-[0px_6px_0px_0px_rgb(201,46,70)] hover:shadow-[0px_5px_0px_0px_rgb(201,46,70)] active:bg-[#ff3856] active:shadow-[0px_4px_0px_0px_rgb(201,46,70)] active:translate-y-1 active:transition-[transform] active:duration-200 cursor-pointer "
             >
                 {modes[modeIndex]}
             </button>
+            <div
+            className={`relative rounded-lg transition-all duration-300
+                ${isFocused ? 'md:w-[60%] lg:w-[70%]' : 'w-[40%]'}`}
+            >
+                <input
+                    type="text"
+                    disabled={isSearching}
+                    placeholder="Search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                    onKeyDown={handleSearchKeyDownSubmit}
+                    className={`w-full p-2 pl-10  flex justify-left rounded-lg focus:outline-none bg-gray-100`}
+                />
+                <Search
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    size={20}
+                />
+                {!isFocused && query !== '' && modes[modeIndex] === 'Text mode' ? 
+                <button 
+                    className={`absolute p-2 right-0 top-1/2 -translate-y-1/2 text-gray-400 rounded-lg hover:bg-gray-200 transition-all duration-300 ease-in-out`}
+                    onClick={() => {
+                        dispatch(setQuery(''))
+                        setSearchTerm('')
+                    }}
+                > <X size={20} />
+                </button> : null}
+            </div>
             {pictureLoading ? <img
                 src={searchTerm}
                 alt="預覽圖片"
