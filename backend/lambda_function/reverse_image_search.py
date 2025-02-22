@@ -21,7 +21,7 @@ def search_index(client, object_embedding):
     description: Search the OpenSearch index for similar images
     """
     # Define number of images to search and retrieve
-    K_SEARCHES = 15
+    K_SEARCHES = 10
 
     # Define search configuration body for K-NN 
     body = {
