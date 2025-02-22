@@ -75,7 +75,6 @@ def display_top_k_results(client, object_embedding):
     description: Display the top K similar images
     """
 
-    similar_images_list = [] # List to store similar images' public URLs
     similar_images_key_list = [] # List to store similar images' keys
     # List of image file names from the K-NN search
     image_files = search_index(client, object_embedding) 
