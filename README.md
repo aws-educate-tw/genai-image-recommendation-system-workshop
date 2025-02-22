@@ -1,7 +1,7 @@
 # 20250307 AWS Generative AI Hackathon Warm-up Workshop
 demo for workshop on 250307 @awseducatestdambtw
 
-![](public/src/img/diagram3.png)
+![](public/src/img/diagram4.png)
 
 ## Key Concepts
 - [ ] Multi-Modal Foundation Model
