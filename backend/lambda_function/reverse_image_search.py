@@ -45,7 +45,6 @@ def search_index(client, object_embedding):
     # response format: https://opensearch.org/docs/latest/api-reference/search/
     knn_response = client.search(index=INDEX_NAME, body=body)
     
-
     result = []
     ids = set()  # Set to keep track of already retrieved images and their scores
 
