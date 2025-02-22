@@ -64,7 +64,7 @@ Input: {user_input}
     body = json.dumps({
         "inputText": prompt,
         "textGenerationConfig": {
-            "maxTokenCount": 30,
+            "maxTokenCount": 50,
             "stopSequences": [],
             "temperature": 0.7,
             "topP": 0.9
