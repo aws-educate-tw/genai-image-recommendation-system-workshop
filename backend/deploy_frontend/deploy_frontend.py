@@ -22,7 +22,14 @@ def upload_files_to_s3():
         for file in files:
             file_path = os.path.join(root, file)
             key = file_path.replace(FRONTEND_PATH, "").lstrip("/")
-            S3.upload_file(file_path, BUCKET_NAME, key, ExtraArgs={"ContentType": "text/html"})
+            if key.endswith(".html"):
+                S3.upload_file(file_path, BUCKET_NAME, key, ExtraArgs={"ContentType": "text/html"})
+            elif key.endswith(".css"):
+                S3.upload_file(file_path, BUCKET_NAME, key, ExtraArgs={"ContentType": "text/css"})
+            elif key.endswith(".js"):
+                S3.upload_file(file_path, BUCKET_NAME, key, ExtraArgs={"ContentType": "application/javascript"})
+            else:
+                S3.upload_file(file_path, BUCKET_NAME, key)
             print(f"Uploaded {file_path} to s3://{BUCKET_NAME}/{key}")
 
 if __name__ == "__main__":
