@@ -157,7 +157,7 @@ const SearchBar = () => {
                 > <X size={20} />
                 </button> : null}
             </div>
-            {pictureLoading ? <img
+            {pictureLoading && searchTerm ? <img
                 src={searchTerm}
                 alt="預覽圖片"
                 className="fixed w-1 h-auto opacity-0"
