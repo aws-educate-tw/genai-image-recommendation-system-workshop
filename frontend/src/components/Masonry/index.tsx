@@ -19,6 +19,7 @@ const Masonry = () => {
             <div className="flex-1 transition-all duration-300 ease-in-out">
             <div className={`${status != 'idle' && selectedMode == 'Image mode' ? 'md:columns-2 lg:columns-3' : 'md:columns-3 lg:columns-4'} columns-2 gap-4 space-y-4`}>
                 {images.map((image) => (
+                image.url ? 
                 <div 
                     key={image.id} 
                     className="break-inside-avoid group relative mb-4 hover:shadow-lg rounded-lg transition-all duration-300 transform hover:-translate-x-1 hover:-translate-y-1"
@@ -36,7 +37,7 @@ const Masonry = () => {
                         <MoreHorizontal size={16} />
                     </button>
                     </div>
-                </div>
+                </div> : null
                 ))}
             </div>
             </div>

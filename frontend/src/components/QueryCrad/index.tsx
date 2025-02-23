@@ -69,7 +69,7 @@ const QueryCard = () => {
                 reverseOrder={false}
             />
             <div className="flex bg-white rounded-lg shadow-lg w-full h-full mb-4 justify-center items-center p-[10%] border-1 border-gray-300 flex-col space-y-8">
-                <img
+                {query ? <><img
                         src={query}
                         alt="預覽圖片"
                         className="max-w-[100%] max-h-[80%] rounded-lg object-cover shadow-lg border-3 border-white"
@@ -85,7 +85,8 @@ const QueryCard = () => {
                     active:top-[4px] active:shadow-[0px_3px_2px_#ff3856] ${isSearching ? 'opacity-50' : 'opacity-100'}`}
                 >
                     <p>Search!</p>
-                </button>
+                </button></>
+                : null}
                 
             </div>
         </div>
