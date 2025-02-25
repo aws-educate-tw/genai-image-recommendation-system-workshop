@@ -1,7 +1,7 @@
 """
 This script is used to handle user's text input and image input.
 """
-from backend.lambda_function.__create_image_embeddings import create_image_embedding, create_word_embedding
+from create_image_embeddings import create_image_embedding, create_word_embedding
 import requests
 import base64
 import os
