@@ -2,7 +2,7 @@
 This is the Lambda function for the image recommendation system.
 """
 import json
-from handle_user_request import handle_user_input_image
+from handle_user_request import handle_user_input
 from reverse_image_search import display_top_k_results
 from connect_OpenSearch_collection import initialize_opensearch_client
 from retrieve_key_words import retrieve_key_words
@@ -48,25 +48,38 @@ def lambda_handler(event, context):
             search_image = body_json.get('search_image')
 
         if search_image:
-            similar_images_list = []
-            key_word_list = retrieve_key_words(search_image)
-            # Search for similar images in OpenSearch
             client = initialize_opensearch_client()
             
-            for key_word in key_word_list:
-                if key_word == "":
-                    continue
+            is_text_mode = search_image.startswith("http://") or search_image.startswith("https://")
+            results = []
+            if is_text_mode:
+                key_word_list = retrieve_key_words(search_image)
+                top_k = 15
+                similar_images_list = []
+                for key_word in key_word_list:
+                    if key_word == "":
+                        continue
+                    
+                    # Create image embedding
+                    embedded_image = handle_user_input(key_word)
+                    result = display_top_k_results(client, embedded_image, top_k)
+                    similar_images_list.append(result)
                 
-                # Create image embedding
-                embedded_image = handle_user_input_image(key_word)
-                result = display_top_k_results(client, embedded_image)
-                similar_images_list.extend(result)
+                for i in range(top_k):
+                    for j in range(len(similar_images_list)):
+                        if len(similar_images_list[j]) > i and similar_images_list[j][i] not in results:
+                            results.append(similar_images_list[j][i])
+                    if len(results) >= 20:
+                        break
+            else:
+                embedded_image = handle_user_input(search_image)
+                results = display_top_k_results(client, embedded_image, 20)
 
             return {
                 "statusCode": 200,
                 "body": json.dumps({
                     "search_image": search_image,
-                    "results": similar_images_list,
+                    "results": results,
                 })
             }
     return {

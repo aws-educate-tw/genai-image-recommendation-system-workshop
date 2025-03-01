@@ -12,7 +12,7 @@ INDEX_NAME = "image_vectors"
 VECTOR_NAME = "vectors"
 VECTOR_MAPPING = "image_files"
 
-def search_index(client, object_embedding):
+def search_index(client, object_embedding, top_k):
     """
     param: client: OpenSearch client object
     param: object_embedding: image embedding
@@ -20,12 +20,10 @@ def search_index(client, object_embedding):
     exception: None
     description: Search the OpenSearch index for similar images
     """
-    # Define number of images to search and retrieve
-    K_SEARCHES = 8
 
     # Define search configuration body for K-NN 
     body = {
-            "size": K_SEARCHES,
+            "size": top_k,
             "_source": {
                 "exclude": [VECTOR_NAME],
             },
@@ -33,7 +31,7 @@ def search_index(client, object_embedding):
                 "knn": {
                     "vectors": {
                         "vector": object_embedding,
-                        "k": K_SEARCHES,
+                        "k": top_k,
                     }
                 }
             },
@@ -62,10 +60,10 @@ def search_index(client, object_embedding):
             ids.add(id_)  # Log score as tracked already
 
     # Print Top K closest matches
-    print(f"Top {K_SEARCHES} closest embeddings and associated scores: {result}")
+    print(f"Top {top_k} closest embeddings and associated scores: {result}")
     return result
 
-def display_top_k_results(client, object_embedding):
+def display_top_k_results(client, object_embedding, top_k):
     """
     param: client: OpenSearch client object
     param: object_embedding: image embedding
@@ -76,7 +74,7 @@ def display_top_k_results(client, object_embedding):
 
     similar_images_key_list = [] # List to store similar images' keys
     # List of image file names from the K-NN search
-    image_files = search_index(client, object_embedding) 
+    image_files = search_index(client, object_embedding, top_k) 
 
     # Download and display each image that matches image query
     for file_name in image_files:

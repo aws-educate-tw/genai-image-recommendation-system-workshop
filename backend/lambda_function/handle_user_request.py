@@ -44,7 +44,7 @@ def encode_image_to_base64(image_data):
     return base64.b64encode(image_data).decode('utf-8')
 
 
-def handle_user_input_image(user_input):
+def handle_user_input(user_input):
     """
     param: user_input: image URL or key word
     return: object_embedding: The top-5 most similar images
