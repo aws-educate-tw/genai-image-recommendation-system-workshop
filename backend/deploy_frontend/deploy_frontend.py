@@ -5,9 +5,10 @@ This Script will be run in EC2 instance to upload the frontend files generated a
 import boto3
 import os
 
-BUCKET_NAME = os.environ.get("BUCKET_NAME")
-REGION = os.environ.get("REGION")
-FRONTEND_PATH = os.environ.get("FRONTEND_PATH") # REACT files path
+BUCKET_NAME = "<your_s3_bucket_name>"
+REGION = "<your_region>"
+FRONTEND_PATH = "<path_to_frontend_build_files>"
+
 S3 = boto3.client("s3", region_name=REGION)
 
 def upload_files_to_s3():

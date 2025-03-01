@@ -9,6 +9,8 @@ import boto3
 import time
 import pandas as pd
 
+HOST = "<your_opensearch_endpoint_without_https>"
+
 INDEX_NAME = "image_vectors"
 VECTOR_NAME = "vectors"
 VECTOR_MAPPING = "image_files"
@@ -20,7 +22,6 @@ def initialize_opensearch_client():
     exception: None
     description: Initialize OpenSearch client
     """
-    HOST = os.getenv("OPENSEARCH_HOST") # OpenSearch host
     REGION = "us-west-2" # OpenSearch region
     service = 'aoss' # OpenSearch service name
     
