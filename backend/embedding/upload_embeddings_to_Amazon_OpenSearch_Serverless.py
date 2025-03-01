@@ -70,6 +70,7 @@ def ingest_embeddings():
             })
         helpers.bulk(client, actions)
         print(f"{file}: Ingested embeddings successfully into OpenSearch", len(actions))
+        time.sleep(3)
 
 if __name__ == "__main__":
     # calculate the running time
