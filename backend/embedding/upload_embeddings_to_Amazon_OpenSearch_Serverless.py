@@ -63,11 +63,12 @@ def ingest_embeddings():
         # Ingest embeddings into vector index with associate vector and text mapping fields
         actions = []
         for idx, record in tq.tqdm(final_embeddings_dataset.iterrows(), total=len(final_embeddings_dataset)):
-            actions.append({
-                "_index": INDEX_NAME, 
-                VECTOR_NAME: record['image_embedding'], 
-                VECTOR_MAPPING: record['image_url']
-            })
+            if '/data/data/data' not in record['image_url']:
+                actions.append({
+                    "_index": INDEX_NAME, 
+                    VECTOR_NAME: record['image_embedding'], 
+                    VECTOR_MAPPING: record['image_url']
+                })
         helpers.bulk(client, actions)
         print(f"{file}: Ingested embeddings successfully into OpenSearch", len(actions))
         time.sleep(3)

@@ -50,9 +50,9 @@ def lambda_handler(event, context):
         if search_image:
             client = initialize_opensearch_client()
             
-            is_text_mode = search_image.startswith("http://") or search_image.startswith("https://")
+            is_image_mode = search_image.startswith("http://") or search_image.startswith("https://")
             results = []
-            if is_text_mode:
+            if not is_image_mode:
                 key_word_list = retrieve_key_words(search_image)
                 top_k = 15
                 similar_images_list = []
